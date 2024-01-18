@@ -15,13 +15,14 @@ def get_each_dataset(dataset_config: Dict, processor, max_length: int) -> Tuple[
     elif dataset_config["dataset_type"] == "llava":
         train_dataset = LlavaDataset.create(dataset_config, processor, max_length, "train")
         val_dataset = LlavaDataset.create(dataset_config, processor, max_length, "validation")
-    elif dataset_config["dataset_type"] == "custom_csv":  # Add support for custom CSV dataset
-        train_dataset = CustomCSVDataset.create(dataset_config, processor, max_length, "train")
-        val_dataset = CustomCSVDataset.create(dataset_config, processor, max_length, "validation")
+    elif dataset_config["dataset_type"] == "my_csv":
+        train_dataset = MyCSVDataset.create(dataset_config["csv_path"], processor, max_length, "train")
+        val_dataset = MyCSVDataset.create(dataset_config["csv_path"], processor, max_length, "validation")
     else:
         raise ValueError(f"dataset_type: {dataset_config['dataset_type']} is not supported.")
 
     return train_dataset, val_dataset
+
 
 def get_dataset(config: Dict) -> Tuple[Dataset, Dataset]:
     processor = get_processor(config["model_config"])
