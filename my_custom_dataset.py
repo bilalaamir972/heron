@@ -16,6 +16,9 @@ class MyCSVDataset(BaseDataset):
         else:
             raise ValueError(f"Invalid split: {split}")
         return cls(csv_path, is_inference)
+    
+    def __len__(self):
+        return len(self.data)   
         
     def _get_item_train(self, index):
         row = self.data.iloc[index]
