@@ -1,2 +1,2 @@
 dataset_type: my_csv
-csv_path: /path/to/your/csv/file.csv
+csv_path: heron/datasets/train_dataset.csv
