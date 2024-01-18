@@ -1,6 +1,6 @@
 import pandas as pd
 from PIL import Image
-from .base_datasets import BaseDataset
+from heron.datasets.base_datasets import BaseDataset
 
 class MyCSVDataset(BaseDataset):
     def __init__(self, csv_path, is_inference=False):
