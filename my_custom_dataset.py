@@ -1,6 +1,6 @@
 import pandas as pd
 from PIL import Image
-from heron.datasets.base_datasets import BaseDataset
+from .base_datasets import BaseDataset
 
 class MyCSVDataset(BaseDataset):
     def __init__(self, csv_path, is_inference=False):
@@ -8,8 +8,13 @@ class MyCSVDataset(BaseDataset):
         self.data = pd.read_csv(csv_path)
 
     @classmethod
-    def create(cls, csv_path, is_inference=False):
-        return cls(csv_path, is_inference)
+    def create(cls, dataset_config, processor, max_length, split="train", is_inference=False):
+        if split == "train":
+            return cls(dataset_config["train_csv_path"], is_inference)
+        elif split == "validation":
+            return cls(dataset_config["val_csv_path"], is_inference)
+        else:
+            raise ValueError(f"Invalid split: {split}")
 
     def _get_item_train(self, index):
         row = self.data.iloc[index]
@@ -46,3 +51,4 @@ class MyCSVDataset(BaseDataset):
             "attention_mask": ...,  # Attention mask for text
             "pixel_values": ...,  # Processed image
         }
+
