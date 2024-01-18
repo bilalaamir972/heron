@@ -10,12 +10,13 @@ class MyCSVDataset(BaseDataset):
     @classmethod
     def create(cls, dataset_config, processor, max_length, split="train", is_inference=False):
         if split == "train":
-            return cls(dataset_config["train_csv_path"], is_inference)
+            csv_path = dataset_config["train_csv_path"]
         elif split == "validation":
-            return cls(dataset_config["val_csv_path"], is_inference)
+            csv_path = dataset_config["val_csv_path"]
         else:
             raise ValueError(f"Invalid split: {split}")
-
+        return cls(csv_path, is_inference)
+        
     def _get_item_train(self, index):
         row = self.data.iloc[index]
         image_path = row["image_path"]
