@@ -1,0 +1,2 @@
+dataset_type: my_csv
+csv_path: /path/to/your/csv/file.csv
