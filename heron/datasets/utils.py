@@ -6,6 +6,7 @@ from .llava_datasets import LlavaDataset
 from .m3it_datasets import M3ITDataset
 from my_custom_dataset import MyCSVDataset
 import yaml
+
 def get_each_dataset(dataset_config: Dict, processor, max_length: int) -> Tuple[Dataset, Dataset]:
     if dataset_config["dataset_type"] == "m3it":
         train_dataset = M3ITDataset.create(dataset_config, processor, max_length, "train")
@@ -17,12 +18,13 @@ def get_each_dataset(dataset_config: Dict, processor, max_length: int) -> Tuple[
         train_dataset = LlavaDataset.create(dataset_config, processor, max_length, "train")
         val_dataset = LlavaDataset.create(dataset_config, processor, max_length, "validation")
     elif dataset_config["dataset_type"] == "my_csv":
-        train_dataset = MyCSVDataset.create(dataset_config["csv_path"], processor, max_length, "train")
-        val_dataset = MyCSVDataset.create(dataset_config["csv_path"], processor, max_length, "validation")
+        train_dataset = MyCSVDataset.create(dataset_config, processor, max_length, "train")
+        val_dataset = MyCSVDataset.create(dataset_config, processor, max_length, "validation")
     else:
         raise ValueError(f"dataset_type: {dataset_config['dataset_type']} is not supported.")
 
     return train_dataset, val_dataset
+
 
 
 def get_dataset(config: Dict) -> Tuple[Dataset, Dataset]:
