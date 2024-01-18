@@ -1,38 +1,48 @@
 import pandas as pd
-from torch.utils.data import Dataset
-from torchvision import transforms
 from PIL import Image
+from .base_datasets import BaseDataset
 
-class CustomCSVDataset(Dataset):
-    def __init__(self, csv_path, transform=None):
+class MyCSVDataset(BaseDataset):
+    def __init__(self, csv_path, is_inference=False):
+        super(MyCSVDataset, self).__init__(is_inference)
         self.data = pd.read_csv(csv_path)
-        self.transform = transform
 
-    def __len__(self):
-        return len(self.data)
+    @classmethod
+    def create(cls, csv_path, is_inference=False):
+        return cls(csv_path, is_inference)
 
-    def __getitem__(self, idx):
-        img_path = self.data.iloc[idx, 0]
-        text = self.data.iloc[idx, 1]
+    def _get_item_train(self, index):
+        row = self.data.iloc[index]
+        image_path = row["image_path"]
+        text = row["text"]
 
-        # Load image
-        img = Image.open(img_path).convert("RGB")
+        # Load image using PIL
+        image = Image.open(image_path).convert("RGB")
 
-        # Apply transformations if provided
-        if self.transform:
-            img = self.transform(img)
+        # Process text and image as needed
+        # ...
 
-        # Return data as a dictionary
-        sample = {"image": img, "text": text}
+        return {
+            "input_ids": ...,  # Processed text
+            "labels": ...,     # Processed text (same as input_ids for language modeling)
+            "attention_mask": ...,  # Attention mask for text
+            "pixel_values": ...,  # Processed image
+        }
 
-        return sample
+    def _get_item_inference(self, index):
+        row = self.data.iloc[index]
+        image_path = row["image_path"]
+        text = row["text"]
 
-# Example usage
-#csv_dataset_path = "/path/to/your/csv/dataset.csv"
-#transform = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor()])
-#custom_dataset = CustomCSVDataset(csv_dataset_path, transform=transform)
+        # Load image using PIL
+        image = Image.open(image_path).convert("RGB")
 
-# Accessing a sample from the dataset
-#sample = custom_dataset[0]
-#print(sample["image"].shape)  # Tensor representing the image
-#print(sample["text"])  # Text corresponding to the image
+        # Process text and image as needed
+        # ...
+
+        return {
+            "input_ids": ...,  # Processed text
+            "labels": None,    # No labels for inference
+            "attention_mask": ...,  # Attention mask for text
+            "pixel_values": ...,  # Processed image
+        }
