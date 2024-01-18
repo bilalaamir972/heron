@@ -42,4 +42,4 @@ model_config:
     task_type: CAUSAL_LM
 
 dataset_config_path:
-  - ./configs/datasets/m3it.yaml
+  - configs/datasets/my_csv_config.yaml
