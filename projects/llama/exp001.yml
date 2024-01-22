@@ -16,15 +16,12 @@ training_config:
   output_dir: ./output/
   report_to: "wandb"
 
-quantization:
-    enabled: true
-    precision: int8  # You can also use int16 for higher precision
 
 model_config:
   fp16: false
   pretrained_path: # None or path to model weight
   model_type: git_llm
-  language_model_name: meta-llama/Llama-2-7b-chat-hf
+  language_model_name: TheBloke/Llama-2-7b-Chat-GPTQ
   vision_model_name: openai/clip-vit-base-patch16
   num_image_with_embedding: 1 # if 1, no img_temporal_embedding
   max_length: 512
