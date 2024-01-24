@@ -45,7 +45,7 @@ class MyCSVDataset(BaseDataset):
 
         return {
             "input_ids": tokenized_text["input_ids"].squeeze(),
-            "labels": tokenized_text["input_ids"].squeeze(),  # For language modeling, adjust as needed
+            "labels": tokenized_text["input_ids"].squeeze().clone(),  # Clone to avoid modifying the original tensor
             "attention_mask": tokenized_text["attention_mask"].squeeze(),
             "pixel_values": processed_image,
         }
