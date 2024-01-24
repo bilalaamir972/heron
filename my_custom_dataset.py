@@ -3,6 +3,7 @@ from PIL import Image
 from transformers import AutoTokenizer
 from torchvision import transforms
 import torch
+from heron.datasets.base_datasets import BaseDataset
 
 class MyCSVDataset(BaseDataset):
     def __init__(self, csv_path, is_inference=False):
@@ -14,7 +15,19 @@ class MyCSVDataset(BaseDataset):
             transforms.ToTensor(),
         ])
 
-    # ... (rest of the class)
+    @classmethod
+    def create(cls, dataset_config, processor, max_length, split="train", is_inference=False):
+        if split == "train":
+            csv_path = dataset_config["train_csv_path"]
+        elif split == "validation":
+            csv_path = dataset_config["val_csv_path"]
+        else:
+            raise ValueError(f"Invalid split: {split}")
+
+        return cls(csv_path, is_inference)
+
+    def __len__(self):
+        return len(self.data)
 
     def _get_item_train(self, index):
         row = self.data.iloc[index]
