@@ -51,7 +51,7 @@ class MyCSVDataset(BaseDataset):
 
         return {
             "input_ids": tokenized_text["input_ids"].squeeze(),
-            "labels": tokenized_text["input_ids"][:, 1:].contiguous(),
+            "labels": tokenized_text["input_ids"].squeeze(),
             "attention_mask": tokenized_text["attention_mask"].squeeze(),
             "pixel_values": resized_image,
         }
