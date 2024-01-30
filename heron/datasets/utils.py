@@ -18,32 +18,9 @@ def get_each_dataset(dataset_config: Dict, processor, max_length: int) -> Tuple[
         train_dataset = LlavaDataset.create(dataset_config, processor, max_length, "train")
         val_dataset = LlavaDataset.create(dataset_config, processor, max_length, "validation")
     elif dataset_config["dataset_type"] == "my_csv":
-        train_dataset = MyCSVDataset.create(dataset_config, processor, max_length, "train")
-        val_dataset = MyCSVDataset.create(dataset_config, processor, max_length, "validation")
+        train_dataset = MyCSVDataset(dataset_config, is_inference=False)
+        val_dataset = MyCSVDataset(dataset_config, is_inference=False)
     else:
         raise ValueError(f"dataset_type: {dataset_config['dataset_type']} is not supported.")
-
-    return train_dataset, val_dataset
-
-
-
-def get_dataset(config: Dict) -> Tuple[Dataset, Dataset]:
-    processor = get_processor(config["model_config"])
-    train_dataset_list = []
-    val_dataset_list = []
-    max_length = config["model_config"]["max_length"]
-
-    for dataset_config_path in config["dataset_config_path"]:
-        try:
-            with open(dataset_config_path, "r") as f:
-                dataset_config = yaml.safe_load(f)
-            train_dataset, val_dataset = get_each_dataset(dataset_config, processor, max_length)
-            train_dataset_list.append(train_dataset)
-            val_dataset_list.append(val_dataset)
-        except IsADirectoryError:
-            print(f"Error: {dataset_config_path} is a directory, not a file.")
-
-    train_dataset = ConcatDataset(train_dataset_list)
-    val_dataset = ConcatDataset(val_dataset_list)
 
     return train_dataset, val_dataset
