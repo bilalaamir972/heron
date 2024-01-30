@@ -6,7 +6,7 @@ import torch
 from heron.datasets.base_datasets import BaseDataset
 
 class MyCSVDataset(BaseDataset):
-    def __init__(self, csv_path, is_inference=False, batch_size=None):
+    def __init__(self, csv_path, is_inference=False):
         super(MyCSVDataset, self).__init__(is_inference)
         self.data = pd.read_csv(csv_path)
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
@@ -14,74 +14,74 @@ class MyCSVDataset(BaseDataset):
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
         ])
-        self.batch_size = batch_size
 
     @classmethod
     def create(cls, dataset_config, processor, max_length, split="train", is_inference=False):
         if split == "train":
             csv_path = dataset_config["train_csv_path"]
-            batch_size = dataset_config.get("train_batch_size", 32)  # Set your desired batch size
         elif split == "validation":
             csv_path = dataset_config["val_csv_path"]
-            batch_size = dataset_config.get("val_batch_size", 32)  # Set your desired batch size
         else:
             raise ValueError(f"Invalid split: {split}")
 
-        return cls(csv_path, is_inference=is_inference, batch_size=batch_size)
+        return cls(csv_path, is_inference)
 
     def __len__(self):
         return len(self.data)
 
     def _get_item_train(self, index):
-        row = self.data.iloc[index]
-        image_path = row["image_path"]
-        text = row["text"]
+    row = self.data.iloc[index]
+    image_path = row["image_path"]
+    text = row["text"]
 
-        # Load image using PIL
-        image = Image.open(image_path).convert("RGB")
+    # Load image using PIL
+    image = Image.open(image_path).convert("RGB")
 
-        # Resize image
-        resized_image = self.image_transform(image)
+    # Resize image
+    resized_image = self.image_transform(image)
 
-        # Tokenize text with a fixed max_length
-        tokenized_text = self.tokenizer(
-            text,
-            return_tensors="pt",
-            padding=True,
-            truncation=True,
-            max_length=512  # Specify a fixed max_length for tokenized sequences
-        )
+    # Tokenize text with a fixed max_length
+    tokenized_text = self.tokenizer(
+        text,
+        return_tensors="pt",
+        padding=True,
+        truncation=True,
+        max_length=512
+    )
 
-        return {
-            "input_ids": tokenized_text["input_ids"].squeeze(),
-            "labels": tokenized_text["input_ids"].squeeze().clone(),
-            "attention_mask": tokenized_text["attention_mask"].squeeze(),
-            "pixel_values": resized_image,
-        }
+    # Assuming you want to predict the next word in the sequence (language modeling task)
+    labels = tokenized_text["input_ids"].clone()
+
+    return {
+        "input_ids": tokenized_text["input_ids"].squeeze(),
+        "labels": labels.squeeze(),
+        "attention_mask": tokenized_text["attention_mask"].squeeze(),
+        "pixel_values": resized_image,
+    }
 
     def _get_item_inference(self, index):
-        row = self.data.iloc[index]
-        image_path = row["image_path"]
-        text = row["text"]
+    row = self.data.iloc[index]
+    image_path = row["image_path"]
+    text = row["text"]
 
-        # Load image using PIL
-        image = Image.open(image_path).convert("RGB")
+    # Load image using PIL
+    image = Image.open(image_path).convert("RGB")
 
-        # Resize image
-        resized_image = self.image_transform(image)
+    # Resize image
+    resized_image = self.image_transform(image)
 
-        # Tokenize text with a fixed max_length
-        tokenized_text = self.tokenizer(
-            text,
-            return_tensors="pt",
-            padding=True,
-            truncation=True,
-            max_length=512  # Specify a fixed max_length for tokenized sequences
-        )
+    # Tokenize text with a fixed max_length
+    tokenized_text = self.tokenizer(
+        text,
+        return_tensors="pt",
+        padding=True,
+        truncation=True,
+        max_length=512
+    )
 
-        return {
-            "input_ids": tokenized_text["input_ids"].squeeze(),
-            "labels": None,
-            "attention_mask": tokenized_text["attention_mask"].squeeze(),
-            "pixel_values": resized_image,
-        }
+    return {
+        "input_ids": tokenized_text["input_ids"].squeeze(),
+        "labels": None,  # No target labels for inference
+        "attention_mask": tokenized_text["attention_mask"].squeeze(),
+        "pixel_values": resized_image,
+    }
