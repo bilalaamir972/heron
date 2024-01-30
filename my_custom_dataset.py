@@ -26,62 +26,59 @@ class MyCSVDataset(BaseDataset):
 
         return cls(csv_path, is_inference)
 
-    def __len__(self):
-        return len(self.data)
-
     def _get_item_train(self, index):
-    row = self.data.iloc[index]
-    image_path = row["image_path"]
-    text = row["text"]
+        row = self.data.iloc[index]
+        image_path = row["image_path"]
+        text = row["text"]
 
-    # Load image using PIL
-    image = Image.open(image_path).convert("RGB")
+        # Load image using PIL
+        image = Image.open(image_path).convert("RGB")
 
-    # Resize image
-    resized_image = self.image_transform(image)
+        # Resize image
+        resized_image = self.image_transform(image)
 
-    # Tokenize text with a fixed max_length
-    tokenized_text = self.tokenizer(
-        text,
-        return_tensors="pt",
-        padding=True,
-        truncation=True,
-        max_length=512
+        # Tokenize text with a fixed max_length
+        tokenized_text = self.tokenizer(
+            text,
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=512
     )
 
-    # Assuming you want to predict the next word in the sequence (language modeling task)
-    labels = tokenized_text["input_ids"].clone()
+        # Assuming you want to predict the next word in the sequence (language modeling task)
+        labels = tokenized_text["input_ids"].clone()
 
-    return {
-        "input_ids": tokenized_text["input_ids"].squeeze(),
-        "labels": labels.squeeze(),
-        "attention_mask": tokenized_text["attention_mask"].squeeze(),
-        "pixel_values": resized_image,
+        return {
+            "input_ids": tokenized_text["input_ids"].squeeze(),
+            "labels": labels.squeeze(),
+            "attention_mask": tokenized_text["attention_mask"].squeeze(),
+            "pixel_values": resized_image,
     }
 
     def _get_item_inference(self, index):
-    row = self.data.iloc[index]
-    image_path = row["image_path"]
-    text = row["text"]
+        row = self.data.iloc[index]
+        image_path = row["image_path"]
+        text = row["text"]
 
-    # Load image using PIL
-    image = Image.open(image_path).convert("RGB")
+        # Load image using PIL
+        image = Image.open(image_path).convert("RGB")
 
-    # Resize image
-    resized_image = self.image_transform(image)
+        # Resize image
+        resized_image = self.image_transform(image)
 
-    # Tokenize text with a fixed max_length
-    tokenized_text = self.tokenizer(
-        text,
-        return_tensors="pt",
-        padding=True,
-        truncation=True,
-        max_length=512
+        # Tokenize text with a fixed max_length
+        tokenized_text = self.tokenizer(
+            text,
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=512
     )
 
-    return {
-        "input_ids": tokenized_text["input_ids"].squeeze(),
-        "labels": None,  # No target labels for inference
-        "attention_mask": tokenized_text["attention_mask"].squeeze(),
-        "pixel_values": resized_image,
+        return {
+            "input_ids": tokenized_text["input_ids"].squeeze(),
+            "labels": None,  # No target labels for inference
+            "attention_mask": tokenized_text["attention_mask"].squeeze(),
+            "pixel_values": resized_image,
     }
