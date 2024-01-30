@@ -6,7 +6,7 @@ import torch
 from heron.datasets.base_datasets import BaseDataset
 
 class MyCSVDataset(BaseDataset):
-    def __init__(self, csv_path, is_inference=False):
+    def __init__(self, csv_path, is_inference=False, batch_size=None):
         super(MyCSVDataset, self).__init__(is_inference)
         self.data = pd.read_csv(csv_path)
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
@@ -14,6 +14,7 @@ class MyCSVDataset(BaseDataset):
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
         ])
+        self.batch_size = batch_size
 
     @classmethod
     def create(cls, dataset_config, processor, max_length, split="train", is_inference=False):
@@ -26,7 +27,7 @@ class MyCSVDataset(BaseDataset):
         else:
             raise ValueError(f"Invalid split: {split}")
 
-        return cls(csv_path, is_inference, batch_size)
+        return cls(csv_path, is_inference=is_inference, batch_size=batch_size)
 
     def __len__(self):
         return len(self.data)
