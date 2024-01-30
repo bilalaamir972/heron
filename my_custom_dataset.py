@@ -25,10 +25,10 @@ class MyCSVDataset(BaseDataset):
             raise ValueError(f"Invalid split: {split}")
 
         return cls(csv_path, is_inference)
-    
+
     def __len__(self):
-     return len(self.data)
-    
+        return len(self.data)
+
     def _get_item_train(self, index):
         row = self.data.iloc[index]
         image_path = row["image_path"]
@@ -46,18 +46,15 @@ class MyCSVDataset(BaseDataset):
             return_tensors="pt",
             padding=True,
             truncation=True,
-            max_length=512
-    )
-
-        # Assuming you want to predict the next word in the sequence (language modeling task)
-        labels = tokenized_text["input_ids"].clone()
+            max_length=512  # Specify a fixed max_length for tokenized sequences
+        )
 
         return {
             "input_ids": tokenized_text["input_ids"].squeeze(),
-            "labels": labels.squeeze(),
+            "labels": tokenized_text["input_ids"]
             "attention_mask": tokenized_text["attention_mask"].squeeze(),
             "pixel_values": resized_image,
-    }
+        }
 
     def _get_item_inference(self, index):
         row = self.data.iloc[index]
@@ -76,12 +73,12 @@ class MyCSVDataset(BaseDataset):
             return_tensors="pt",
             padding=True,
             truncation=True,
-            max_length=512
-    )
+            max_length=512  # Specify a fixed max_length for tokenized sequences
+        )
 
         return {
             "input_ids": tokenized_text["input_ids"].squeeze(),
-            "labels": None,  # No target labels for inference
+            "labels": None,
             "attention_mask": tokenized_text["attention_mask"].squeeze(),
             "pixel_values": resized_image,
-    }
+        }
