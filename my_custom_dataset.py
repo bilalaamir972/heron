@@ -19,12 +19,14 @@ class MyCSVDataset(BaseDataset):
     def create(cls, dataset_config, processor, max_length, split="train", is_inference=False):
         if split == "train":
             csv_path = dataset_config["train_csv_path"]
+            batch_size = dataset_config.get("train_batch_size", 32)  # Set your desired batch size
         elif split == "validation":
             csv_path = dataset_config["val_csv_path"]
+            batch_size = dataset_config.get("val_batch_size", 32)  # Set your desired batch size
         else:
             raise ValueError(f"Invalid split: {split}")
 
-        return cls(csv_path, is_inference)
+        return cls(csv_path, is_inference, batch_size)
 
     def __len__(self):
         return len(self.data)
