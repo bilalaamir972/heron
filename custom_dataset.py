@@ -19,27 +19,31 @@ class CSVDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, index):
-        row = self.data.iloc[index]
-        image_path = row["image_path"]
-        text = row["text"]
+    row = self.data.iloc[index]
+    image_path = row["image_path"]
+    text = row["text"]
 
-        # Load image using PIL
-        image = Image.open(image_path).convert("RGB")
+    # Load image using PIL
+    image = Image.open(image_path).convert("RGB")
 
-        # Resize image
-        resized_image = self.image_transform(image)
+    # Resize image
+    resized_image = self.image_transform(image)
 
-        # Tokenize text with a fixed max_length
-        tokenized_text = self.tokenizer(
-            text,
-            return_tensors="pt",
-            padding=True,
-            truncation=True,
-            max_length=512  # Specify a fixed max_length for tokenized sequences
-        )
+    # Tokenize text with a fixed max_length
+    tokenized_text = self.tokenizer(
+        text,
+        return_tensors="pt",
+        padding=True,
+        truncation=True,
+        max_length=512  # Specify a fixed max_length for tokenized sequences
+    )
 
-        return {
-            "input_ids": tokenized_text["input_ids"],
-            "attention_mask": tokenized_text["attention_mask"],
-            "pixel_values": resized_image,
-        }
+    # Squeeze unnecessary dimension
+    tokenized_text["input_ids"] = tokenized_text["input_ids"].squeeze(0)
+    tokenized_text["attention_mask"] = tokenized_text["attention_mask"].squeeze(0)
+
+    return {
+        "input_ids": tokenized_text["input_ids"],
+        "attention_mask": tokenized_text["attention_mask"],
+        "pixel_values": resized_image,
+    }
