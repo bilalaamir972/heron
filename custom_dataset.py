@@ -5,7 +5,7 @@ from torchvision import transforms
 import torch
 from torch.utils.data import Dataset
 
-class MyCSVDataset(Dataset):
+class CSVDataset(Dataset):
     def __init__(self, csv_path, is_inference=False):
         super(MyCSVDataset, self).__init__()
         self.data = pd.read_csv(csv_path)
