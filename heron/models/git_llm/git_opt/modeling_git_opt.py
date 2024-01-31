@@ -251,9 +251,9 @@ class GitOPTModel(OPTModel):
             input_shape = inputs_embeds.size()[:-1]
         else:
             raise ValueError("You have to specify either input_ids or inputs_embeds")
-
-        batch_size, seq_length = input_shape
         print(input_shape)
+        batch_size, seq_length = input_shape
+        
         # past_key_values_length
         past_key_values_length = (
             past_key_values[0][0].shape[2] if past_key_values is not None else 0
