@@ -7,7 +7,7 @@ from torch.utils.data import Dataset
 
 class CSVDataset(Dataset):
     def __init__(self, csv_path, is_inference=False):
-        super(MyCSVDataset, self).__init__()
+        super(CSVDataset, self).__init__()
         self.data = pd.read_csv(csv_path)
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
         self.image_transform = transforms.Compose([
