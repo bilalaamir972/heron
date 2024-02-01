@@ -39,6 +39,9 @@ class CSVDataset(Dataset):
             max_length=self.max_sequence_length,
         )
 
+        # Reshape the "input_ids" to remove the second dimension
+        tokenized_text["input_ids"] = tokenized_text["input_ids"].squeeze(0)
+
         # In image captioning, you usually have source and target sequences
         # Source sequence (image features)
         image_inputs = {"pixel_values": resized_image}
