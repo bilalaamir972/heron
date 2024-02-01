@@ -54,5 +54,4 @@ class CSVDataset(Dataset):
             **image_inputs,
             **tokenized_text,
             "labels": text_targets,
-            "ignore_index": self.tokenizer.pad_token_id,
         }
