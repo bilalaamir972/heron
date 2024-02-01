@@ -1,5 +1,3 @@
-import torch
-
 class CSVDataset(Dataset):
     def __init__(self, csv_path):
         super(CSVDataset, self).__init__()
@@ -9,6 +7,7 @@ class CSVDataset(Dataset):
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
         ])
+        self.max_sequence_length = 512  # Adjust this based on your model's input size
 
     def __len__(self):
         return len(self.data)
@@ -28,14 +27,10 @@ class CSVDataset(Dataset):
         tokenized_text = self.tokenizer(
             text,
             return_tensors="pt",
-            padding=True,
+            padding="max_length",
             truncation=True,
-            max_length=512  # Specify a fixed max_length for tokenized sequences
+            max_length=self.max_sequence_length,
         )
-
-        # Squeeze unnecessary dimension
-        tokenized_text["input_ids"] = tokenized_text["input_ids"].squeeze(0)
-        tokenized_text["attention_mask"] = tokenized_text["attention_mask"].squeeze(0)
 
         # In image captioning, you usually have source and target sequences
         # Source sequence (image features)
