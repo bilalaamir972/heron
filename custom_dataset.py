@@ -1,12 +1,7 @@
-import pandas as pd
-from PIL import Image
-from transformers import AutoTokenizer
-from torchvision import transforms
 import torch
-from torch.utils.data import Dataset
 
 class CSVDataset(Dataset):
-    def __init__(self, csv_path, is_inference=False):
+    def __init__(self, csv_path):
         super(CSVDataset, self).__init__()
         self.data = pd.read_csv(csv_path)
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
@@ -42,8 +37,15 @@ class CSVDataset(Dataset):
         tokenized_text["input_ids"] = tokenized_text["input_ids"].squeeze(0)
         tokenized_text["attention_mask"] = tokenized_text["attention_mask"].squeeze(0)
 
+        # In image captioning, you usually have source and target sequences
+        # Source sequence (image features)
+        image_inputs = {"pixel_values": resized_image}
+
+        # Target sequence (text description)
+        text_targets = tokenized_text["input_ids"]
+
         return {
-            "input_ids": tokenized_text["input_ids"],
-            "attention_mask": tokenized_text["attention_mask"],
-            "pixel_values": resized_image,
+            **image_inputs,
+            **tokenized_text,
+            "labels": text_targets,
         }
