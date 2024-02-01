@@ -18,8 +18,8 @@ def get_each_dataset(dataset_config: Dict, processor, max_length: int) -> Tuple[
         train_dataset = LlavaDataset.create(dataset_config, processor, max_length, "train")
         val_dataset = LlavaDataset.create(dataset_config, processor, max_length, "validation")
     elif dataset_config["dataset_type"] == "my_csv":
-        train_dataset = CSVDataset(csv_path=dataset_config["train_csv_path"], is_inference=False)
-        val_dataset = CSVDataset(csv_path=dataset_config["val_csv_path"], is_inference=False)
+        train_dataset = CSVDataset(csv_path=dataset_config["train_csv_path"])
+        val_dataset = CSVDataset(csv_path=dataset_config["val_csv_path"])
     else:
         raise ValueError(f"dataset_type: {dataset_config['dataset_type']} is not supported.")
 
