@@ -5,31 +5,21 @@ from torchvision import transforms
 import torch
 from heron.datasets.base_datasets import BaseDataset
 
-class MyCSVDataset(BaseDataset):
-    def __init__(self, csv_path, is_inference=False):
-        super(MyCSVDataset, self).__init__(is_inference)
+class CSVDataset(Dataset):
+    def __init__(self, csv_path):
+        super(CSVDataset, self).__init__()
         self.data = pd.read_csv(csv_path)
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
         self.image_transform = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
         ])
-
-    @classmethod
-    def create(cls, dataset_config, processor, max_length, split="train", is_inference=False):
-        if split == "train":
-            csv_path = dataset_config["train_csv_path"]
-        elif split == "validation":
-            csv_path = dataset_config["val_csv_path"]
-        else:
-            raise ValueError(f"Invalid split: {split}")
-
-        return cls(csv_path, is_inference)
+        self.max_sequence_length = 512  # Adjust this based on your model's input size
 
     def __len__(self):
         return len(self.data)
 
-    def _get_item_train(self, index):
+    def __getitem__(self, index):
         row = self.data.iloc[index]
         image_path = row["image_path"]
         text = row["text"]
@@ -44,17 +34,18 @@ class MyCSVDataset(BaseDataset):
         tokenized_text = self.tokenizer(
             text,
             return_tensors="pt",
-            padding=True,
+            padding="max_length",
             truncation=True,
-            max_length=512  # Specify a fixed max_length for tokenized sequences
+            max_length=self.max_sequence_length,
         )
 
+        # Modify the return statement to include "labels" key with ignore_index
         return {
-            "input_ids": tokenized_text["input_ids"],
-            "labels": tokenized_text["input_ids"],
-            "attention_mask": tokenized_text["attention_mask"],
             "pixel_values": resized_image,
+            "input_ids": tokenized_text["input_ids"].squeeze(0),
+            "attention_mask": tokenized_text["attention_mask"].squeeze(0),
         }
+
 
 
    
