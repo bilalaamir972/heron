@@ -5,7 +5,7 @@ from torchvision import transforms
 import torch
 from heron.datasets.base_datasets import BaseDataset
 
-class CSVDataset(Dataset):
+class myCSVDataset(Dataset):
     def __init__(self, csv_path):
         super(CSVDataset, self).__init__()
         self.data = pd.read_csv(csv_path)
