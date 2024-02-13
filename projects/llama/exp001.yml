@@ -3,7 +3,7 @@ training_config:
   gradient_accumulation_steps: 4
   num_train_epochs: 1
   dataloader_num_workers: 16
-  fp16: true
+  fp16: false
   optim: "adamw_torch"
   learning_rate: 5.0e-5
   logging_steps: 100
@@ -18,7 +18,7 @@ training_config:
 
 
 model_config:
-  fp16: true
+  fp16: false
   pretrained_path: # None or path to model weight
   model_type: git_llm
   language_model_name: facebook/opt-350m
