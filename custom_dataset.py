@@ -24,34 +24,38 @@ class CSVDataset(Dataset):
         image_path = row["image_path"]
         text = row["text"]
 
-        # Load image using PIL
+    # Load image using PIL
         image = Image.open(image_path).convert("RGB")
 
-        # Resize image
+    # Resize image
         resized_image = self.image_transform(image)
 
-        # Tokenize text with a fixed max_length
+    # Tokenize text with a fixed max_length
         tokenized_text = self.tokenizer(
             text,
             return_tensors="pt",
             padding="max_length",
             truncation=True,
             max_length=self.max_sequence_length,
-        )
+    )
 
-        # Reshape the "input_ids" to remove the second dimension
+    # Reshape the "input_ids" to remove the second dimension
         tokenized_text["input_ids"] = tokenized_text["input_ids"].squeeze(0)
 
-        # In image captioning, you usually have source and target sequences
-        # Source sequence (image features)
+    # Create attention mask
+        attention_mask = tokenized_text["attention_mask"].squeeze(0)
+
+    # In image captioning, you usually have source and target sequences
+    # Source sequence (image features)
         image_inputs = {"pixel_values": resized_image}
 
-        # Target sequence (text description)
+    # Target sequence (text description)
         text_targets = tokenized_text["input_ids"]
 
-        # Modify the return statement to include "labels" key with ignore_index
+    # Modify the return statement to include "labels" key with ignore_index
         return {
             **image_inputs,
             **tokenized_text,
             "labels": text_targets,
-        }
+            "attention_mask": attention_mask,  # Include attention mask
+    }
