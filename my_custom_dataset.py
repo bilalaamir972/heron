@@ -44,7 +44,9 @@ class CSVDataset(Dataset):
             "pixel_values": resized_image,
             "input_ids": tokenized_text["input_ids"].squeeze(0),
             "attention_mask": tokenized_text["attention_mask"].squeeze(0),
+            "labels": tokenized_text["input_ids"].squeeze(0),  # Target labels with the same batch size
         }
+
 
 
 
