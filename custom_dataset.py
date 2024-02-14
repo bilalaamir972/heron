@@ -9,7 +9,7 @@ class CSVDataset(Dataset):
     def __init__(self, csv_path):
         super(CSVDataset, self).__init__()
         self.data = pd.read_csv(csv_path)
-        self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+        self.tokenizer = AutoTokenizer.from_pretrained("gpt2")
         self.image_transform = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
