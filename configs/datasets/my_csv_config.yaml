@@ -1,3 +1,3 @@
 dataset_type: my_csv
-train_csv_path: /content/heron/heron/datasets/train_dataset_1image.csv
-val_csv_path: /content/heron/heron/datasets/val_dataset_1image.csv
+train_csv_path: /content/heron/heron/datasets/train_dataset.csv
+val_csv_path: /content/heron/heron/datasets/val_dataset.csv
