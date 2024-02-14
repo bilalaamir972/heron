@@ -22,7 +22,7 @@ class CSVDataset(Dataset):
     def __getitem__(self, index):
         row = self.data.iloc[index]
         image_path = row["image_path"]
-        text = row["text"]
+        lables = row["labels"]
 
         # Load image using PIL
         image = Image.open(image_path).convert("RGB")
