@@ -22,7 +22,7 @@ class CSVDataset(Dataset):
     def __getitem__(self, index):
         row = self.data.iloc[index]
         image_path = row["image_path"]
-        lables = row["labels"]
+        labels = row["labels"]
 
         # Load image using PIL
         image = Image.open(image_path).convert("RGB")
@@ -32,7 +32,7 @@ class CSVDataset(Dataset):
 
         # Tokenize text with a fixed max_length
         tokenized_text = self.tokenizer(
-            text,
+            labels,
             return_tensors="pt",
             padding="max_length",
             truncation=True,
