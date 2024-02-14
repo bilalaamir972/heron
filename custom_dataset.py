@@ -10,6 +10,10 @@ class CSVDataset(Dataset):
         super(CSVDataset, self).__init__()
         self.data = pd.read_csv(csv_path)
         self.tokenizer = AutoTokenizer.from_pretrained("gpt2")
+        
+        # Add padding token to the tokenizer
+        self.tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+
         self.image_transform = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
